@@ -63,7 +63,7 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, `{"error": "Transaction failed"}`, http.StatusInternalServerError)
 			return
 		}
-		query := "INSERT INTO applications (surname, name,midname, phone, email, bday, gender, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+		query := "INSERT INTO applications (surname, name,midname, phone_number, email, birth_date, gender, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 		w.Header().Set("Content-Type", "application/json")
 		res, err := tx.Exec(
 			query,
