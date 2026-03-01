@@ -3,14 +3,20 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"net/http/cgi"
+	"regexp"
+	"strings"
 
+	// драйвер mysql для работы с mariadb
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// entity из бд
 type Application struct {
 	Surname   string `json:"surname"`
 	Name      string `json:"name"`
@@ -24,7 +30,7 @@ type Application struct {
 }
 
 func main() {
-
+	// авторизация по данным. пока без .env
 	dsn := "u82186:1169903@tcp(localhost:3306)/u82186"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -40,7 +46,7 @@ func main() {
 	})
 
 	mux.HandleFunc("/save", saveHandler(db))
-
+	// откидываем ненужные для бэкенда данные из пути
 	cgi.Serve(http.StripPrefix("/backend_lab_3/backend.cgi", mux))
 }
 
@@ -57,7 +63,17 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Ошибка парсинга JSON: "+err.Error(), http.StatusBadRequest)
 			return
 		}
-
+		// валидация данных
+		if err := validate(app); err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			return
+		}
+		// используем транзакции, чтобы исключить проблему с несоотнесённостью applications с languages связью многие-ко-многим
+		//
+		// если же не сделать этого, получим ситуацию: заявка есть в applications, но будет отсутствовать хотя бы одна запись
+		// в applications_languages
 		tx, err := db.Begin()
 		if err != nil {
 			http.Error(w, `{"error": "Transaction failed"}`, http.StatusInternalServerError)
@@ -67,7 +83,10 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		res, err := tx.Exec(
 			query,
-			app.Surname, app.Name, app.Midname, app.Phone, app.Email, app.Birthdate, app.Gender, app.Bio,
+			// защитил сайт от xss атак, проведя sanitize через html.EscapeString
+
+			// если этого не сделать: <script>вредоносный код</script> выполнится в полях без проверки
+			html.EscapeString(app.Surname), html.EscapeString(app.Name), html.EscapeString(app.Midname), app.Phone, app.Email, app.Birthdate, app.Gender, html.EscapeString(app.Bio),
 		)
 		if err != nil {
 			tx.Rollback()
@@ -75,10 +94,11 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, `{"error": "Failed to save application"}`, http.StatusInternalServerError)
 			return
 		}
+		// id добавленной заявки в бд
 		lastId, _ := res.LastInsertId()
 		langQuery := `INSERT INTO application_language (application_id, language_id) VALUES (?, ?)`
 		for _, langID := range app.Favlangs {
-			_, err := db.Exec(langQuery, lastId, langID)
+			_, err := tx.Exec(langQuery, lastId, langID)
 			if err != nil {
 				tx.Rollback()
 				http.Error(w, `{"error": "Failed to save languages"}`, http.StatusInternalServerError)
@@ -96,4 +116,39 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 
 		json.NewEncoder(w).Encode(response)
 	}
+}
+
+// валидация перед вводом в бд
+func validate(app Application) error {
+	if strings.TrimSpace(app.Surname) == "" || len(app.Surname) > 128 {
+		return errors.New("Фамилия обязательна и не должна превышать 128 символов")
+	}
+	if strings.TrimSpace(app.Name) == "" || len(app.Name) > 128 {
+		return errors.New("Имя обязательно и не должно превышать 128 символов")
+	}
+	if strings.TrimSpace(app.Midname) != "" && len(app.Midname) > 128 {
+		return errors.New("Отчество не должно превышать 128 символов")
+	}
+
+	// используем регулярные выражения
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	if !emailRegex.MatchString(strings.ToLower(app.Email)) {
+		return errors.New("Некорректный формат email")
+	}
+
+	phoneRegex := regexp.MustCompile(`^(\+?[0-9\-\(\)\s]{10,20})$`)
+	if !phoneRegex.MatchString(app.Phone) {
+		return errors.New("Некорректный формат номера телефона")
+	}
+	if app.Birthdate == "" {
+		return errors.New("дата рождения не указана")
+	}
+	if len(app.Favlangs) == 0 {
+		return errors.New("выберите хотя бы один язык программирования")
+	}
+
+	if strings.TrimSpace(app.Bio) == "" {
+		return errors.New("заполните поле 'О себе'")
+	}
+	return nil
 }
