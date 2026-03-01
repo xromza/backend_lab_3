@@ -19,7 +19,7 @@
 
 <body class="h-100">
     <!-- никакого вайб-кодинга. программируем только руками -->
-    <form class="flex flex-col mx-auto my-auto gap-6 justify-center items-center p-5" onsubmit="alert('Отправлено')"
+    <form id="form" class="flex flex-col mx-auto my-auto gap-6 justify-center items-center p-5"
         style="height: 100vh;" method="POST" action="javascript::void(0);">
         <h1 class="text-3xl font-semibold">Форма обратной связи</h1>
         <div class="grid gap-2 md:grid-cols-3 grid-cols-1 w-full">
@@ -29,7 +29,7 @@
             <input type="text" name="name"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Имя*" required>
-            <input type="text"  name="surname"
+            <input type="text"  name="midname"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Отчество">
         </div>
@@ -38,14 +38,14 @@
                 class="flex-1 border p-3 focus:shadow-lg focus:ring-1 focus:ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Email*" required>
 
-            <input type="date" autocomplete="bday" name="birthdate"
+            <input type="date" autocomplete="bday" name="bday"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Дата рождения*" required>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
             <div class="flex gap-2">
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" autocomplete="sex" name="gender" value="0" class="peer hidden" required>
+                    <input type="radio" name="gender" value="0" class="peer hidden" required>
                     <div class="border border-gray-200 p-3 rounded-xl text-center transition duration-300 
                     peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:ring-2 peer-checked:ring-blue-600/20
                     hover:border-gray-300 hover:shadow-md">
@@ -83,7 +83,7 @@
             <option value="12">Go</option>
         </select>
         <div class="w-full">
-            <textarea rows="4" class="border p-3 w-full focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"></textarea>
+            <textarea rows="4" name="bio" class="border p-3 w-full focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"></textarea>
         </div>
         <div class="w-full">
             <label class="w-auto flex flex-row gap-2 cursor-pointer">
@@ -105,6 +105,7 @@
             else button.setAttribute("disabled", "");
         });
     </script>
+    <script src="save.js"></script>
 </body>
 
 </html>
