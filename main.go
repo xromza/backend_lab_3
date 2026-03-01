@@ -41,7 +41,7 @@ func main() {
 
 	mux.HandleFunc("/save", saveHandler(db))
 
-	cgi.Serve(http.StripPrefix("/backend.cgi", mux))
+	cgi.Serve(http.StripPrefix("/backend_lab_3/backend.cgi", mux))
 }
 
 func saveHandler(db *sql.DB) http.HandlerFunc {

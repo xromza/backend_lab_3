@@ -13,7 +13,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
         bio: formData.get('bio')
     };
     try {
-        const response = await fetch('/backend.cgi/save', {
+        const response = await fetch('/backend_lab_3/backend.cgi/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
