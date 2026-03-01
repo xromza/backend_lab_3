@@ -5,13 +5,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лабораторная работа 3 | Петров Кирилл Дмитриевич ПМ21/2</title>
+    <style>
+        form {
+         max-width: 75%;   
+        }
+        @media screen and (min-width: 1280px) {
+            form {
+                max-width: 50%;
+            }
+        }
+    </style>
 </head>
 
-<body class="h-100 flex justify-center items-center">
+<body class="h-100">
     <!-- никакого вайб-кодинга. программируем только руками -->
-
-    <form class="flex flex-col gap-6 justify-center items-center" onsubmit="alert('Отправлено')"
-        style="height: 100vh; max-width: 50%;" method="POST" action="javascript::void(0);">
+    <form class="flex flex-col mx-auto my-auto gap-6 justify-center items-center p-5" onsubmit="alert('Отправлено')"
+        style="height: 100vh;" method="POST" action="javascript::void(0);">
+        <h1 class="text-3xl font-semibold">Форма обратной связи</h1>
         <div class="grid gap-2 md:grid-cols-3 grid-cols-1 w-full">
             <input type="text" name="surname"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
@@ -19,54 +29,82 @@
             <input type="text" name="name"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Имя*" required>
-            <input type="text" name="surname"
+            <input type="text"  name="surname"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Отчество">
         </div>
         <div class="flex flex-col md:flex-row gap-2 w-full">
-            <input type="email" name="email"
+            <input type="email" autocomplete="email" name="email"
                 class="flex-1 border p-3 focus:shadow-lg focus:ring-1 focus:ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Email*" required>
 
-            <input type="date" name="birthdate"
+            <input type="date" autocomplete="bday" name="birthdate"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Дата рождения*" required>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
-                <div class="flex gap-2">
-                    <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="gender" value="0" class="peer hidden" required>
-                        <div class="border border-gray-200 p-3 rounded-xl text-center transition duration-300 
+            <div class="flex gap-2">
+                <label class="flex-1 cursor-pointer">
+                    <input type="radio" autocomplete="sex" name="gender" value="0" class="peer hidden" required>
+                    <div class="border border-gray-200 p-3 rounded-xl text-center transition duration-300 
                     peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:ring-2 peer-checked:ring-blue-600/20
                     hover:border-gray-300 hover:shadow-md">
-                            <span class="text-gray-700 font-medium peer-checked:text-blue-700">Мужской</span>
-                        </div>
-                    </label>
+                        <span class="text-gray-700 font-medium peer-checked:text-blue-700">Мужской</span>
+                    </div>
+                </label>
 
-                    <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="gender" value="1" class="peer hidden">
-                        <div class="border border-gray-200 p-3 rounded-xl text-center transition duration-300 
+                <label class="flex-1 cursor-pointer">
+                    <input type="radio" name="gender" value="1" class="peer hidden">
+                    <div class="border border-gray-200 p-3 rounded-xl text-center transition duration-300 
                     peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:ring-2 peer-checked:ring-blue-600/20
                     hover:border-gray-300 hover:shadow-md">
-                            <span class="text-gray-700 font-medium peer-checked:text-blue-700">Женский</span>
-                        </div>
-                    </label>
-                </div>
-            <input type="tel" name="phone"
+                        <span class="text-gray-700 font-medium peer-checked:text-blue-700">Женский</span>
+                    </div>
+                </label>
+            </div>
+            <input type="tel" autocomplete="tel" name="phone"
                 class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"
                 placeholder="Номер телефона*" required>
         </div>
-        <div>
-            <select name="favlang[]" required class="border p-3 focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300">
-                <option value='0' disabled selected>Любимый язык программирования</option>
-            </select>
+        <select name="favlang[]" multiple required
+            class="border p-3 w-full focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300">
+            <option disabled selected>Любимый язык программирования</option>
+            <option value="1">Pascal</option>
+            <option value="2">C</option>
+            <option value="3">C++</option>
+            <option value="4">JavaScript</option>
+            <option value="5">PHP</option>
+            <option value="6">Python</option>
+            <option value="7">Java</option>
+            <option value="8">Haskell</option>
+            <option value="9">Clojure</option>
+            <option value="10">Prolog</option>
+            <option value="11">Scala</option>
+            <option value="12">Go</option>
+        </select>
+        <div class="w-full">
+            <textarea rows="4" class="border p-3 w-full focus:shadow-lg focus:ring-1 ring-blue-600 focus:outline-none rounded-lg transition-shadow duration-300"></textarea>
         </div>
-        <button type="submit" class="active:scale-95 bg-blue-600 hover:bg-blue-700 duration-300 
-            rounded-xl text-white px-4 py-3
-             hover:shadow-lg transition"
-            style="background-color: rgba(29, 78, 216, 1); color:white;">Отправить</button>
+        <div class="w-full">
+            <label class="w-auto flex flex-row gap-2 cursor-pointer">
+                <input type="checkbox" id="check">
+                <p class="text-lg">С контрактом ознакомлен(-а)</p>
+            </label>
+        </div>
+        <button type="submit" id="submit-btn" disabled="false" class="active:scale-95 disabled:active:scale-100 bg-blue-600 disabled:bg-gray-50 disabled:ring-2 disabled:ring-gray-200 hover:bg-blue-700 disabled:hover:bg-gray-50 disabled:text-gray-700 duration-300 
+            rounded-xl text-white px-4 py-3 
+             hover:shadow-lg transition">Отправить</button>
     </form>
     <script src="./TailwindCSS.js"></script>
+    <script>
+        const button = document.getElementById("submit-btn");
+        const checkbox = document.getElementById("check");
+        checkbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            if (isChecked && button.getAttribute("disabled") !== null) button.removeAttribute("disabled");
+            else button.setAttribute("disabled", "");
+        });
+    </script>
 </body>
 
 </html>
