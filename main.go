@@ -26,7 +26,7 @@ type Application struct {
 func main() {
 
 	dsn := "u82186:1169903@tcp(localhost:3306)/u82186"
-	db, err := sql.Open("musql", dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
