@@ -6,7 +6,7 @@ CREATE TABLE applications (
   phone_number varchar(128) NOT NULL DEFAULT '',
   email varchar(128) NOT NULL DEFAULT '',
   gender tinyint unsigned NOT NULL DEFAULT 0,
-  bio text NOT NULL DEFAULT '',
+  bio text NOT NULL,
   birth_date DATE NOT NULL,
   PRIMARY KEY (application_id)
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4;
