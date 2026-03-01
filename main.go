@@ -21,7 +21,7 @@ type Application struct {
 	Surname   string `json:"surname"`
 	Name      string `json:"name"`
 	Midname   string `json:"midname"`
-	Phone     string `json:"tel"`
+	Phone     string `json:"phone"`
 	Email     string `json:"email"`
 	Birthdate string `json:"bday"`
 	Gender    int    `json:"gender"`
