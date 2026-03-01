@@ -67,6 +67,7 @@ checkbox.addEventListener('change', (e) => {
 });
 window.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("body");
+    const favlang = document.getElementById("favlangs");
     form.classList.remove("no-fouc");
     const textFields = ["surname", "name", "midname", "email", "bday", "phone", "bio"];
     textFields.forEach(id => {

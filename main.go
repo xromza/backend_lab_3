@@ -136,6 +136,7 @@ func validate(app Application) error {
 		return errors.New("Некорректный формат email")
 	}
 
+	app.Phone = strings.TrimSpace(app.Phone)
 	phoneRegex := regexp.MustCompile(`^(\+?[0-9\-\(\)\s]{10,20})$`)
 	if !phoneRegex.MatchString(app.Phone) {
 		return errors.New("Некорректный формат номера телефона")
