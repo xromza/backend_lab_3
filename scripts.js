@@ -1,4 +1,5 @@
 function eraseAll() {
+    const favlang = document.getElementById("favlangs");
     localStorage.clear();
     const form = document.querySelector("form");
     form.reset();
