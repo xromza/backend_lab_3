@@ -139,7 +139,7 @@ func validate(app Application, langcount int) error {
 	}
 
 	// используем регулярные выражения
-	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`)
 	if !emailRegex.MatchString(strings.ToLower(app.Email)) {
 		return errors.New("Некорректный формат email")
 	}
