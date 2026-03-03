@@ -11,6 +11,7 @@ import (
 	"net/http/cgi"
 	"regexp"
 	"strings"
+	"time"
 
 	// драйвер mysql для работы с mariadb
 	_ "github.com/go-sql-driver/mysql"
@@ -63,8 +64,15 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 			http.Error(w, "Ошибка парсинга JSON: "+err.Error(), http.StatusBadRequest)
 			return
 		}
+		var langcount int
+		err = db.QueryRow("SELECT COUNT(*) FROM languages;").Scan(&langcount)
+
+		if err != nil {
+			http.Error(w, "Ошибка обращения к базе данных", http.StatusInternalServerError)
+			return
+		}
 		// валидация данных
-		if err := validate(app); err != nil {
+		if err := validate(app, langcount); err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -119,7 +127,7 @@ func saveHandler(db *sql.DB) http.HandlerFunc {
 }
 
 // валидация перед вводом в бд
-func validate(app Application) error {
+func validate(app Application, langcount int) error {
 	if strings.TrimSpace(app.Surname) == "" || len(app.Surname) > 128 {
 		return errors.New("Фамилия обязательна и не должна превышать 128 символов")
 	}
@@ -144,8 +152,23 @@ func validate(app Application) error {
 	if app.Birthdate == "" {
 		return errors.New("дата рождения не указана")
 	}
+	birthDate, err := time.Parse("2006-01-02", app.Birthdate)
+	if err != nil {
+		return errors.New("Введите корректную дату. Формат YYYY-MM-DD")
+	}
+	if birthDate.After(time.Now()) {
+		return errors.New("Дата не может быть в будущем")
+	}
+	if time.Since(birthDate).Hours() > 24*365*150 {
+		return errors.New("Указан слишком большой возраст")
+	}
 	if len(app.Favlangs) == 0 {
 		return errors.New("выберите хотя бы один язык программирования")
+	}
+	for _, favlang := range app.Favlangs {
+		if favlang < 0 || favlang > langcount {
+			return errors.New("Выберите корректный любимый язык программирования")
+		}
 	}
 
 	if strings.TrimSpace(app.Bio) == "" {
