@@ -9,9 +9,12 @@ import (
 	"log"
 	"net/http"
 	"net/http/cgi"
+	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 
 	// драйвер mysql для работы с mariadb
 	_ "github.com/go-sql-driver/mysql"
@@ -31,8 +34,11 @@ type Application struct {
 }
 
 func main() {
-	// авторизация по данным. пока без .env
-	dsn := "u82186:1169903@tcp(localhost:3306)/u82186"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Ошибка загрузки .env файла")
+	}
+	dsn := os.Getenv("DSN")
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
